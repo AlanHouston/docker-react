@@ -4,6 +4,25 @@ services:
 
 before_install:
   - docker build -t alanhouston/docker-react -f Dockerfile.dev . 
+  # inital image
 
 script:
   - docker run -e CI=true alanhouston/docker-react npm run test -- --coverage
+  # running tests
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "docker-react"
+  env: "Dockerreact-env"
+  bucket_name: "elasticbeanstalk-us-east-2-048257413468"
+  # services -> s3 -> shows buckets
+  bucket_path: "docker-react"
+  # since I havent deployed, default is name of app
+  on:
+    branch: master
+    # only deploy when anything is pushed to master
+
+    # services -> iam -> users (on left) -> add user - > descriptive name
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
